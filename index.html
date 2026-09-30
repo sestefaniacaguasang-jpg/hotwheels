@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Feliz Día de los Carritos de Hot Wheels 💙</title>
+    <link rel="stylesheet" href="style.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    
+    <link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@400;600;700&family=Quicksand:wght@500;700&display=swap" rel="stylesheet">
+</head>
+<body>
+
+    <!-- Fondo Mágico Nocturno con Estrellas -->
+    <div id="stars-container"></div>
+    <div id="glow-overlay"></div>
+
+    <!-- Controles de Audio y Sonido -->
+    <button id="music-btn" title="Activar/Desactivar Música">🎵</button>
+    <audio id="bg-music" loop src="musica.mp3"></audio>
+
+    <!-- 1. PANTALLA DE CARGA -->
+    <div id="loading-screen" class="active">
+        <h2 class="loading-title">Cargando tu ramo de Hot Wheels...</h2>
+        
+        <div class="speedometer-container">
+            <div class="speedometer-arc">
+                <div class="speedometer-needle" id="needle"></div>
+            </div>
+            <div class="speedometer-center"></div>
+            <div class="speedometer-text" id="speed-text">0 KM/H</div>
+        </div>
+
+        <div class="car-track">
+            <div class="car-wrapper" id="loading-car">
+                <div class="car-trail"></div>
+                <div class="mini-hotwheels">
+                    <div class="car-body"></div>
+                    <div class="car-top"></div>
+                    <div class="car-wheel wheel-left"></div>
+                    <div class="car-wheel wheel-right"></div>
+                    <div class="car-flame"></div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- 2. ESCENA PRINCIPAL (RAMO DE FLORES) -->
+    <main id="main-experience" class="hidden">
+        <h1 class="main-title">Feliz día de los carritos de Hot Wheels 💙</h1>
+        
+        <!-- Contenedor del Ramo de Flores SVG/CSS Dinámico -->
+        <div class="bouquet-container" id="bouquet-container">
+            <svg id="bouquet-svg" viewBox="0 0 400 500" preserveAspectRatio="xMidYMax meet">
+                <g id="stems-group"></g>
+                <g id="leaves-group"></g>
+            </svg>
+            <div id="flowers-container"></div>
+        </div>
+    </main>
+
+    <!-- 3. MODAL DE TARJETA ESTILO HOT WHEELS -->
+    <div id="card-modal" class="modal-overlay hidden">
+        <div class="modal-backdrop" id="modal-backdrop"></div>
+        
+        <div class="modal-card">
+            <button class="close-btn" id="close-card-btn">&times;</button>
+            <div class="card-blister">
+                <div class="card-header">
+                   <img src="imagenes/logo-hotwheels.png" class="hw-logo" alt="Hot Wheels">
+                </div>
+                <div class="card-image-container">
+                    <img id="card-image" src="" class="car-image" alt="Carro Hot Wheels">
+                </div>
+                <div class="card-footer">
+                    <p id="card-phrase" class="card-phrase"></p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="script.js"></script>
+</body>
+</html>

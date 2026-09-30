@@ -1,0 +1,715 @@
+/* ==========================================================================
+   1. CONFIGURACIÓN GENERAL Y VARIABLES
+   ========================================================================== */
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    user-select: none;
+    -webkit-tap-highlight-color: transparent;
+}
+
+:root {
+    --bg-dark: #040914;
+    --bg-night: #091326;
+    --cyan-light: #9bf0ff;
+    --blue-flower: #72c6ef;
+    --blue-dark-flower: #4293c2;
+    --stem-green: #40883d;
+    --leaf-green: #5ca158;
+    --hw-red: #e62227;
+    --hw-yellow: #ffeb00;
+}
+
+body {
+    width: 100vw;
+    height: 100vh;
+    overflow: hidden;
+    background-color: var(--bg-dark);
+    font-family: 'Quicksand', 'Fredoka', sans-serif;
+    color: #ffffff;
+    position: relative;
+}
+
+/* Fondo Mágico de Noche */
+#stars-container {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    z-index: 1;
+    pointer-events: none;
+}
+
+.star {
+    position: absolute;
+    background-color: #ffffff;
+    border-radius: 50%;
+    animation: twinkle linear infinite;
+}
+
+@keyframes twinkle {
+    0%, 100% { opacity: 0.2; transform: scale(0.8); }
+    50% { opacity: 1; transform: scale(1.2); box-shadow: 0 0 8px #ffffff; }
+}
+
+#glow-overlay {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: radial-gradient(circle at center, rgba(16, 37, 77, 0.4) 0%, rgba(4, 9, 20, 0.95) 100%);
+    z-index: 2;
+    pointer-events: none;
+}
+
+/* Botón de Música */
+#music-btn {
+    position: fixed;
+    top: 20px;
+    right: 20px;
+    z-index: 100;
+    background: rgba(255, 255, 255, 0.15);
+    border: 1px solid rgba(255, 255, 255, 0.3);
+    border-radius: 50%;
+    width: 44px;
+    height: 44px;
+    font-size: 20px;
+    cursor: pointer;
+    backdrop-filter: blur(5px);
+    transition: all 0.3s ease;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+#music-btn:hover {
+    transform: scale(1.1);
+    background: rgba(255, 255, 255, 0.25);
+}
+
+/* ==========================================================================
+   2. PANTALLA DE CARGA
+   ========================================================================== */
+#loading-screen {
+    font-family: 'Franklin Gothic Medium', 'Arial Narrow', Arial, sans-serif;
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: var(--bg-dark);
+    z-index: 50;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    opacity: 1;
+    transition: opacity 1s ease, visibility 1s ease;
+}
+
+#loading-screen.hidden {
+    opacity: 0;
+    visibility: hidden;
+    pointer-events: none;
+}
+
+.loading-title {
+    font-family: 'Fredoka', sans-serif;
+    color: var(--cyan-light);
+    font-size: 1.8rem;
+    margin-bottom: 40px;
+    text-shadow: 0 0 12px rgba(155, 240, 255, 0.6);
+    text-align: center;
+    padding: 0 20px;
+}
+
+/* Velocímetro CSS */
+.speedometer-container {
+    position: relative;
+    width: 220px;
+    height: 130px;
+    display: flex;
+    justify-content: center;
+    align-items: flex-end;
+}
+
+.speedometer-arc {
+    width: 200px;
+    height: 100px;
+    border-top-left-radius: 110px;
+    border-top-right-radius: 110px;
+    border: 8px solid rgba(255, 255, 255, 0.1);
+    border-bottom: 0;
+    border-top-color: #00d2ff;
+    border-left-color: #0072ff;
+    border-right-color: #ff416c;
+    position: relative;
+    box-shadow: 0 -5px 15px rgba(0, 210, 255, 0.3);
+}
+
+.speedometer-needle {
+    position: absolute;
+    bottom: 0;
+    left: 50%;
+    width: 4px;
+    height: 85px;
+    background: #ff2a2a;
+    transform-origin: bottom center;
+    transform: translateX(-50%) rotate(-90deg);
+    transition: transform 0.1s ease-out;
+    border-radius: 2px;
+    box-shadow: 0 0 8px #ff2a2a;
+}
+
+.speedometer-center {
+    position: absolute;
+    bottom: -5px;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 20px;
+    height: 20px;
+    background: #ffffff;
+    border-radius: 50%;
+    box-shadow: 0 0 10px rgba(0,0,0,0.5);
+    z-index: 2;
+}
+
+.speedometer-text {
+    position: absolute;
+    bottom: 25px;
+    font-family: 'Fredoka', sans-serif;
+    font-weight: 700;
+    font-size: 1.4rem;
+    color: #ffffff;
+    text-shadow: 0 0 8px rgba(255, 255, 255, 0.8);
+}
+
+/* Carrito CSS de Carga */
+.car-track {
+    width: 80%;
+    max-width: 400px;
+    height: 40px;
+    margin-top: 50px;
+    position: relative;
+    border-bottom: 2px solid rgba(255, 255, 255, 0.15);
+}
+
+.car-wrapper {
+    position: absolute;
+    bottom: 2px;
+    left: -60px;
+    display: flex;
+    align-items: center;
+}
+
+.car-trail {
+    width: 70px;
+    height: 6px;
+    background: linear-gradient(90deg, transparent, #ff4500, #ff8c00);
+    border-radius: 4px;
+    margin-right: -10px;
+    filter: blur(2px);
+}
+
+.mini-hotwheels {
+    position: relative;
+    width: 45px;
+    height: 18px;
+}
+
+.car-body {
+    width: 100%;
+    height: 10px;
+    background: linear-gradient(90deg, #d31027, #ea384d);
+    position: absolute;
+    bottom: 3px;
+    border-radius: 3px 8px 2px 2px;
+    box-shadow: 0 0 8px rgba(234, 56, 77, 0.8);
+}
+
+.car-top {
+    width: 22px;
+    height: 7px;
+    background: #111;
+    position: absolute;
+    top: 2px;
+    left: 10px;
+    border-radius: 4px 4px 0 0;
+}
+
+.car-wheel {
+    width: 8px;
+    height: 8px;
+    background: #333;
+    border: 2px solid #aaa;
+    border-radius: 50%;
+    position: absolute;
+    bottom: 0;
+    animation: spin 0.2s linear infinite;
+}
+
+.wheel-left { left: 6px; }
+.wheel-right { right: 8px; }
+
+@keyframes spin {
+    100% { transform: rotate(360deg); }
+}
+
+/* ==========================================================================
+   3. ESCENA PRINCIPAL Y RAMO DE FLORES
+   ========================================================================== */
+#main-experience {
+    position: relative;
+    width: 100%;
+    height: 100vh;
+    z-index: 10;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: space-between;
+    padding: 30px 15px 0 15px;
+}
+
+#main-experience.hidden {
+    display: none;
+}
+
+.main-title {
+    font-family: 'Fredoka', cursive, sans-serif;
+    color: var(--cyan-light);
+    font-size: 2rem;
+    text-align: center;
+    text-shadow: 0 0 15px rgba(155, 240, 255, 0.7);
+    animation: fadeInDown 1.2s ease forwards;
+    z-index: 12;
+}
+
+@keyframes fadeInDown {
+    from { opacity: 0; transform: translateY(-30px); }
+    to { opacity: 1; transform: translateY(0); }
+}
+
+/* Ramo de Flores */
+.bouquet-container {
+    position: relative;
+    width: 100%;
+    max-width: 420px;
+    height: 75vh;
+    display: flex;
+    justify-content: center;
+    align-items: flex-end;
+}
+
+#bouquet-svg {
+    position: absolute;
+    bottom: 0;
+    width: 100%;
+    height: 100%;
+    z-index: 11;
+    pointer-events: none;
+}
+
+/* Animaciones SVG */
+.stem-path {
+    stroke-dasharray: 1000;
+    stroke-dashoffset: 1000;
+    animation: growStem 2.2s ease forwards
+}
+
+.leaf-path {
+    opacity: 0;
+    transform-origin: center;
+    animation: fadeInLeaf 1s ease forwards;
+}
+
+@keyframes growStem {
+    to { stroke-dashoffset: 0; }
+}
+
+@keyframes fadeInLeaf {
+    to { opacity: 1; }
+}
+
+/* Flores CSS Interactivas */
+#flowers-container {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    z-index: 15;
+    pointer-events: none;
+}
+
+.flower-item {
+    position: absolute;
+    width: 90px;
+    height: 100px;
+    cursor: pointer;
+    pointer-events: auto;
+    opacity: 0;
+    /* Alinear el centro inferior de la flor con la punta del tallo */
+    transform: translate(-50%, -85%) scale(0);
+    transition: transform 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275), filter 0.3s ease;
+}
+.flower-item.appear {
+    /* 1. Crece/aparece en 0.8s  |  2. Se empieza a balancear en bucle de 3s de forma infinita */
+    animation: 
+        growFlower 0.8s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards,
+        swayFlower 3.5s ease-in-out 0.8s infinite alternate;
+}
+/* Animación de apertura para los pétalos (Efecto Florecer) */
+.flower-item.appear .petal-left {
+    animation: bloomLeft 1.2s cubic-bezier(0.34, 1.56, 0.64, 1) forwards;
+}
+.flower-item.appear .petal-right {
+    animation: bloomRight 1.2s cubic-bezier(0.34, 1.56, 0.64, 1) forwards;
+}
+.flower-item.appear .petal-main {
+    animation: bloomCenter 1.2s cubic-bezier(0.34, 1.56, 0.64, 1) forwards;
+}
+.flower-head {
+    position: relative;
+    width: 85px;
+    height: 85px;
+    margin: 0% auto;
+    filter: drop-shadow(0 4px 10px rgba(0, 180, 255, 0.3));
+}
+.flower-svg {
+    width: 100%;
+    height: 100%;
+    overflow: visible;
+}
+.scalloped-top {
+    position: absolute;
+    top: 0;
+    width: 100%;
+    height: 30px;
+    background: radial-gradient(circle at 12.5% 100%, #a2eeff 12px, transparent 13px),
+                radial-gradient(circle at 37.5% 100%, #a2eeff 12px, transparent 13px),
+                radial-gradient(circle at 62.5% 100%, #a2eeff 12px, transparent 13px),
+                radial-gradient(circle at 87.5% 100%, #a2eeff 12px, transparent 13px);
+    background-size: 25% 100%;
+    background-repeat: repeat-x;
+}
+
+@keyframes growFlower {
+    0% { 
+        opacity: 0; 
+        transform: translate(-50%, -60%) scale(0); 
+    }
+    100% { 
+        opacity: 1; 
+        transform: translate(-50%, -85%) scale(1); 
+    }
+}
+@keyframes swayFlower {
+    0% { transform: translate(-50%, -85%) scale(1) rotate(-2.5deg); }
+    100% { transform: translate(-50%, -85%) scale(1) rotate(2.5deg); }
+}
+/* Pétalo izquierdo se despliega hacia la izquierda */
+@keyframes bloomLeft {
+    0% {
+        transform: rotate(0deg) scale(0.4);
+    }
+    100% {
+        transform: rotate(-24deg) scale(1);
+    }
+}
+
+@keyframes bloomRight {
+    0% {
+        transform: rotate(0deg) scale(0.4);
+    }
+    100% {
+        transform: rotate(24deg) scale(1);
+    }
+}
+@keyframes bloomCenter {
+    0% {
+        transform: scale(0.3, 0.5);
+    }
+    100% {
+        transform: scale(1, 1);
+    }
+}
+@keyframes swayFlower {
+    0% {
+        transform: translate(-50%, -85%) scale(1) rotate(-3deg);
+    }
+    50% {
+        transform: translate(-50%, -87%) scale(1.02) rotate(3deg);
+    }
+    100% {
+        transform: translate(-50%, -85%) scale(1) rotate(-3deg);
+    }
+}
+.petal {
+    position: absolute;
+    background: linear-gradient(145deg, #b3f5ff 0%, #6bc5f8 50%, #2b7cb7 100%);
+    border-radius: 60px 60px 20px 20px;
+    box-shadow: inset 0 2px 8px rgba(255, 255, 255, 0.8), 0 4px 10px rgba(0, 0, 0, 0.2);
+    transform-origin: bottom center;
+  }
+
+.petal-main {
+    width: 58px;
+    height: 82px;
+    left: 18px;
+    top: 5px;
+    z-index: 3;
+}
+
+.petal-left {
+    width: 52px;
+    height: 75px;
+    left: 2px;
+    top: 12px;
+    transform: rotate(-24deg);
+    z-index: 2;
+}
+
+.petal-right {
+    width: 52px;
+    height: 75px;
+    right: 2px;
+    top: 12px;
+    transform: rotate(24deg);
+    z-index: 2;
+}
+
+.flower-body {
+    position: absolute;
+    top: 15px;
+    width: 100%;
+    height: 55px;
+    background: linear-gradient(180deg, #7ad8ff 0%, #3baee8 60%, #1d82ca 100%);
+    border-radius: 0 0 40px 40px;
+    box-shadow: inset 0 -4px 8px rgba(255, 255, 255, 0.5);
+    }
+.flower-ribbon {
+    position: absolute;
+    bottom: -2px;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 36px;
+    height: 22px;
+    z-index: 10;
+}
+
+.ribbon-loop {
+    position: absolute;
+    top: 2px;
+    width: 16px;
+    height: 11px;
+    background: #23a0ee;
+    border: 1.5px solid #7cd2ff;
+    border-radius: 50%;
+}
+
+.ribbon-left {
+    left: 2px;
+    transform: rotate(-15deg);
+}
+
+.ribbon-right {
+    right: 2px;
+    transform: rotate(15deg);
+}
+
+.ribbon-knot {
+    position: absolute;
+    top: 5px;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 8px;
+    height: 8px;
+    background: #0077c8;
+    border-radius: 50%;
+    z-index: 2;
+}
+
+.ribbon-tail {
+    position: absolute;
+    top: 11px;
+    width: 5px;
+    height: 11px;
+    background: #23a0ee;
+    border-radius: 2px;
+}
+
+.tail-left {
+    left: 12px;
+    transform: rotate(25deg);
+}
+
+.tail-right {
+    right: 12px;
+    transform: rotate(-25deg);
+}
+
+.flower-bow::before, .flower-bow::after {
+    content: '';
+    position: absolute;
+    width: 16px;
+    height: 16px;
+    background: #399fd6;
+    border-radius: 50% 50% 0 50%;
+    top: 3px;
+}
+
+.flower-bow::before { left: -13px; transform: rotate(-45deg); }
+.flower-bow::after { right: -13px; transform: rotate(135deg); }
+
+/* ==========================================================================
+   4. MODAL Y TARJETA BLÍSTER (ESTILO HOT WHEELS)
+   ========================================================================== */
+.modal-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100vw;
+    height: 100vh;
+    z-index: 1000;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    opacity: 1;
+    visibility: visible;
+    transition: opacity 0.3s ease, visibility 0.3s ease;
+}
+
+.modal-overlay.hidden {
+    opacity: 0;
+    visibility: hidden;
+    pointer-events: none;
+}
+
+.modal-backdrop {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(5, 12, 28, 0.75);
+    backdrop-filter: blur(8px);
+}
+
+/* Tarjeta Blíster Flotante */
+.modal-card {
+    position: relative;
+    width: 290px;
+    background: linear-gradient(165deg, #1075ce 0%, #08498b 60%, #032b57 100%);
+    border-radius: 16px;
+    padding: 18px;
+    box-shadow: 0 15px 35px rgba(0, 0, 0, 0.6), 0 0 20px rgba(0, 162, 255, 0.4);
+    border: 2px solid rgba(255, 255, 255, 0.2);
+    z-index: 1010;
+    animation: popIn 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards;
+}
+
+@keyframes popIn {
+    0% { transform: scale(0.7); opacity: 0; }
+    100% { transform: scale(1); opacity: 1; }
+}
+
+/* Botón de Cierre Flotante Azul */
+.close-btn {
+    position: absolute;
+    top: -12px;
+    right: -12px;
+    width: 32px;
+    height: 32px;
+    background: #2196f3;
+    color: #ffffff;
+    border: 2px solid #ffffff;
+    border-radius: 50%;
+    font-size: 18px;
+    font-weight: bold;
+    cursor: pointer;
+    box-shadow: 0 4px 8px rgba(0,0,0,0.4);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 1020;
+    transition: transform 0.2s ease, background 0.2s ease;
+}
+
+.close-btn:hover {
+    background: #0d8aee;
+    transform: scale(1.15);
+}
+
+/* Encabezado y Logo */
+.card-header {
+    text-align: center;
+    margin-bottom: 12px;
+}
+
+.hw-logo {
+    width: 180px;
+    height: auto;
+    filter: drop-shadow(0 3px 6px rgba(0,0,0,0.4));
+}
+
+/* Contenedor de la Foto del Carro */
+.card-image-container {
+    width: 100%;
+    height: 190px;
+    background: radial-gradient(circle, rgba(255,255,255,0.2) 0%, rgba(0,0,0,0.3) 100%);
+    border-radius: 12px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    overflow: hidden;
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    box-shadow: inset 0 0 10px rgba(0,0,0,0.5);
+}
+
+.car-image {
+    max-width: 95%;
+    max-height: 95%;
+    object-fit: contain;
+    filter: drop-shadow(0 8px 12px rgba(0,0,0,0.6));
+}
+
+/* Pie con Frase */
+.card-footer {
+    margin-top: 14px;
+    text-align: center;
+}
+
+.card-phrase {
+    color: #ffffff;
+    font-size: 14px;
+    font-weight: 600;
+    line-height: 1.4;
+    margin: 0;
+    font-family: 'Fredoka', sans-serif;
+    text-shadow: 0 2px 4px rgba(0,0,0,0.8);
+}
+
+/* ==========================================================================
+   5. RESPONSIVE
+   ========================================================================== */
+@media (max-width: 480px) {
+    .main-title {
+        font-size: 1.5rem;
+    }
+    
+    .bouquet-container {
+        height: 70vh;
+    }
+    
+    .card-wrapper {
+        width: 260px;
+        height: 380px;
+    }
+
+    .romantic-phrase {
+        font-size: 1.15rem;
+    }
+}
